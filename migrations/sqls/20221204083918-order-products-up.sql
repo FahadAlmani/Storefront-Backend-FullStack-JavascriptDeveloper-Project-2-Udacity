@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS order_products(
+orderId BIGINT NOT NULL,
+	productId BIGINT NOT NULL,
+	quantity INT NOT NULL,
+FOREIGN KEY(orderId) 
+	  REFERENCES orders(id)
+	  ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    FOREIGN KEY(productId) 
+	  REFERENCES products(id)
+	  ON DELETE CASCADE
+    ON UPDATE CASCADE
+    );

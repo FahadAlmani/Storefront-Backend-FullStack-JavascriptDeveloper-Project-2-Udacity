@@ -1,0 +1,10 @@
+INSERT INTO products (name, price, category) VALUES ('Apple', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Orange', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Banana', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Pineapple', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Cherry', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Strawberry', 10, 'Fruit');
+INSERT INTO products (name, price, category) VALUES ('Potato', 10,'Vegetable');
+INSERT INTO products (name, price, category) VALUES ('Tomato', 10,'Vegetable');
+INSERT INTO products (name, price, category) VALUES ('Pumpkin', 10,'Vegetable');
+INSERT INTO products (name, price, category) VALUES ('Mint', 10,'Vegetable');
