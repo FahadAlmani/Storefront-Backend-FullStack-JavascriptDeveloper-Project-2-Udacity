@@ -48,15 +48,4 @@ describe("Testing Product Endpoint.", () => {
   it("[Testing]: The index Endpoint.", async () => {
     await request.get(`/product/category/${product.category}`).expect(200);
   });
-
-  it("[Testing]: The create Endpoint.", async () => {
-    await request
-      .post("/product/create")
-      .send({
-        status: "complete",
-        products: [{ productId: "1", quantity: 100 }],
-      })
-      .set("authorization", `Bearer ${token}`)
-      .expect(400);
-  });
 });

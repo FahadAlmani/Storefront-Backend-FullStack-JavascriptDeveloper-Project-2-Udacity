@@ -5,6 +5,6 @@ import orderRouter from "./endpoint/orderEndpoint";
 const router = Router();
 
 router.use("/user", userRouter);
-router.use("/product", productRouter);
+router.use("/", productRouter);
 router.use("/order", orderRouter);
 export default router;

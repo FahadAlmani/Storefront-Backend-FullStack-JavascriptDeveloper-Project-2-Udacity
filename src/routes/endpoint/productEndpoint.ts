@@ -10,10 +10,10 @@ import { authorization } from "../middleware/authorization";
 
 const router = Router();
 
-router.get("/index", index);
-router.get("/show/:id", show);
-router.post("/create", authorization, create);
-router.get("/popularProducts", popularProducts);
-router.get("/category/:category", category);
+router.get("product/index", index);
+router.get("product/show/:id", show);
+router.get("product/popularProducts", popularProducts);
+router.get("product/category/:category", category);
+router.post("order/create", authorization, create);
 
 export default router;

@@ -39,6 +39,7 @@ export class productModel {
     const testResult = await connection.query(testSQL);
     const productsId: string[] = testResult.rows;
     const orders = [];
+    console.log(productsId);
 
     for (let i = 0; i < productsID.length; i++) {
       if (!(productsID[i] in productsId)) {

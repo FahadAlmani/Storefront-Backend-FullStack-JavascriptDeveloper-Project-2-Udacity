@@ -53,4 +53,15 @@ describe("Testing Order Endpoint.", () => {
       .set("authorization", `Bearer ${token}`)
       .expect(200);
   });
+
+  it("[Testing]: The create Endpoint.", async () => {
+    await request
+      .post("/order/create")
+      .send({
+        status: "complete",
+        products: [{ productId: "1", quantity: 100 }],
+      })
+      .set("authorization", `Bearer ${token}`)
+      .expect(400);
+  });
 });
