@@ -30,7 +30,8 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 - users Table (id:searal, firstname:varchar, lastname:varchar, username:varchar, password:text)
 - products Table (id:searal, name:varchar, price:int, category:varchar)
-- orders Table (id:searal, userId:varchar[foreign key to users table], productId:varchar[foreign key to product table], quantity:int, status:varchar)
+- orders Table (id:searal, userId:Bigint[foreign key to users table], status:varchar)
+- order_products (orderid:Bigint[foreign key to orders table], productid:Bigint[foreign key to products table], quantity:Integer)
 
 ## Data Shapes
 
@@ -53,6 +54,6 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 - id
 - userId
+- status (active or complete)
 - productId
 - quantity
-- status (active or complete)
