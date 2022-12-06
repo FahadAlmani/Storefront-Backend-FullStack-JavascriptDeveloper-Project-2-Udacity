@@ -1,3 +1,4 @@
+import { Connection } from "pg";
 import client from "../database";
 
 export type Order = {
@@ -86,5 +87,50 @@ export class orderModel {
 
     fucResult.push(temp);
     return fucResult;
+  };
+
+  addProduct = async (
+    userID: string,
+    orderID: string,
+    productID: string,
+    quantity: number
+  ) => {
+    const connection = await client.connect();
+    const SQLtest1 = `SELECT FROM order WHERE id = ${orderID} and userid = ${userId} RETURNING *`;
+    const test1 = await connection.query(SQLtest1);
+
+    if (!test1.rowCount) {
+      connection.release();
+      return { err: "orderId", value: orderID };
+    }
+
+    const SQLtest2 = `SELECT FROM product WHERE id = ${productID} RETURNING *`;
+    const test2 = await connection.query(SQLtest2);
+
+    if (!test2.rowCount) {
+      connection.release();
+      return { err: "productId", value: productID };
+    }
+
+    if (quantity <= 0) {
+      connection.release();
+      return { err: "quantity", value: quantity };
+    }
+
+    const SQLadd = `INSERT INTO order_product(${orderID}, ${productID},${quantity})`;
+    await connection.query(SQLadd);
+    const SQLfind = `SELECT * FROM order_products WHERE orderid = ${orderID}`;
+    const findResult = await connection.query(SQLfind);
+    const orders = findResult.rows;
+    const SQLstatus = `SELECT status FROM order WHERE orderid = ${orderID}`;
+    const statusResult = await connection.query(SQLstatus);
+    const status = statusResult.rows[0].status;
+
+    const orderAfterAddition: Order = {
+      id: orderID,
+      userid: userID,
+      status: status,
+      products: {},
+    };
   };
 }
