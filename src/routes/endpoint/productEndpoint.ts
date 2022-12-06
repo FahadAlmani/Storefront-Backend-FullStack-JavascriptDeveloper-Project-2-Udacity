@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
+  addProduct,
   category,
-  create,
+  deleteProduct,
   index,
   popularProducts,
   show,
@@ -10,10 +11,11 @@ import { authorization } from "../middleware/authorization";
 
 const router = Router();
 
-router.get("product/index", index);
-router.get("product/show/:id", show);
-router.get("product/popularProducts", popularProducts);
-router.get("product/category/:category", category);
-router.post("order/create", authorization, create);
+router.get("/index", index);
+router.get("/show/:id", show);
+router.get("/popularProducts", popularProducts);
+router.get("/category/:category", category);
+router.post("/addProduct", authorization, addProduct);
+router.delete("/deleteProduct", authorization, deleteProduct);
 
 export default router;

@@ -28,47 +28,6 @@ export class productModel {
     return product;
   };
 
-  create = async (
-    userId: number,
-    productsID: string[],
-    quantity: number[],
-    status: string
-  ): Promise<Order | number> => {
-    const connection = await client.connect();
-    const testSQL = `SELECT id FROM products`;
-    const testResult = await connection.query(testSQL);
-    const productsId: string[] = testResult.rows;
-    const orders = [];
-    console.log(productsId);
-
-    for (let i = 0; i < productsID.length; i++) {
-      if (!(productsID[i] in productsId)) {
-        connection.release();
-        return Number(productsID[i]);
-      }
-    }
-    const SQLorder = `INSERT INTO orders (userId, status) VALUES ('${userId}', '${status}') RETURNING id`;
-    const resultOrder = await connection.query(SQLorder);
-    const orderId: number = resultOrder.rows[0].id;
-
-    for (let i = 0; i < productsID.length; i++) {
-      const SQL = `INSERT INTO order_products VALUES ('${orderId}', '${productsID[i]}', ${quantity[i]}) RETURNING productid, quantity `;
-      const temp = await connection.query(SQL);
-      const order = temp.rows[0];
-      orders.push({ productId: order.productid, quantity: order.quantity });
-    }
-
-    const result: Order = {
-      id: orderId,
-      userid: Number(userId),
-      status: status,
-      products: orders,
-    };
-
-    connection.release();
-    return result;
-  };
-
   popularProducts = async (): Promise<Product[]> => {
     const connection = await client.connect();
     const SQL = `SELECT products.* FROM products, (SELECT productId, SUM (quantity) from order_products group by productId order by sum DESC limit 5) as mostProduct WHERE products.id = mostProduct.productId order by mostProduct.sum DESC`;
@@ -83,5 +42,103 @@ export class productModel {
     const result = await connection.query(SQL);
     connection.release;
     return result.rows;
+  };
+
+  addProduct = async (
+    userID: number,
+    orderID: number,
+    productID: number,
+    quantity: number
+  ): Promise<Order | number> => {
+    const connection = await client.connect();
+    const SQLtest1 = `SELECT * FROM orderS WHERE id = ${orderID} and userid = ${userID}`;
+    const test1 = await connection.query(SQLtest1);
+
+    if (!test1.rowCount) {
+      connection.release();
+      return 0;
+    }
+
+    const SQLtest2 = `SELECT * FROM products WHERE id = ${productID}`;
+    const test2 = await connection.query(SQLtest2);
+
+    if (!test2.rowCount) {
+      connection.release();
+      return 1;
+    }
+
+    if (quantity <= 0) {
+      connection.release();
+      return 2;
+    }
+
+    const SQLadd = `INSERT INTO order_products VALUES (${orderID}, ${productID},${quantity})`;
+    await connection.query(SQLadd);
+    const SQLfind = `SELECT * FROM order_products WHERE orderid = ${orderID}`;
+    const findResult = await connection.query(SQLfind);
+    const orders = findResult.rows;
+    const SQLstatus = `SELECT status FROM orders WHERE id = ${orderID}`;
+    const statusResult = await connection.query(SQLstatus);
+    const status = statusResult.rows[0].status;
+
+    const orderAfterAddition: Order = {
+      id: orderID,
+      userid: userID,
+      status: status,
+      products: [],
+    };
+    for (let i = 0; i < orders.length; i++) {
+      orderAfterAddition.products.push({
+        productId: orders[i].productid,
+        quantity: orders[i].quantity,
+      });
+    }
+    return orderAfterAddition;
+  };
+
+  deleteProduct = async (
+    userID: number,
+    orderID: number,
+    productID: number
+  ): Promise<Order | number> => {
+    const connection = await client.connect();
+    const SQLtest1 = `SELECT * FROM orderS WHERE id = ${orderID} and userid = ${userID}`;
+    const test1 = await connection.query(SQLtest1);
+
+    if (!test1.rowCount) {
+      connection.release();
+      return 0;
+    }
+
+    const SQLtest2 = `SELECT * FROM products WHERE id = ${productID}`;
+    const test2 = await connection.query(SQLtest2);
+
+    if (!test2.rowCount) {
+      connection.release();
+      return 1;
+    }
+
+    const SQLdelete = `DELETE FROM order_products WHERE orderid = ${orderID} AND productid = ${productID}`;
+    await connection.query(SQLdelete);
+    const SQLfind = `SELECT * FROM order_products WHERE orderid = ${orderID}`;
+    const findResult = await connection.query(SQLfind);
+    const orders = findResult.rows;
+    const SQLstatus = `SELECT status FROM orders WHERE id = ${orderID}`;
+    const statusResult = await connection.query(SQLstatus);
+    const status = statusResult.rows[0].status;
+
+    const orderAfterAddition: Order = {
+      id: orderID,
+      userid: userID,
+      status: status,
+      products: [],
+    };
+    for (let i = 0; i < orders.length; i++) {
+      orderAfterAddition.products.push({
+        productId: orders[i].productid,
+        quantity: orders[i].quantity,
+      });
+    }
+    return orderAfterAddition;
   };
 }

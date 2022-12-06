@@ -9,11 +9,15 @@ export type Order = {
 };
 
 export class orderModel {
-  index = async (userId: string): Promise<Order[]> => {
+  index = async (userId: number): Promise<Order[]> => {
     const connection = await client.connect();
-    const SQL = `SELECT * FROM (SELECT id, status from orders WHERE userid = '${userId}') as userOrders INNER JOIN  order_products on id = orderid`;
+    const SQL = `SELECT * FROM (SELECT id, status FROM orders WHERE userid = '${userId}') as userOrders INNER JOIN  order_products on id = orderid`;
     const result = await connection.query(SQL);
     connection.release();
+
+    if (!result.rowCount) {
+      return [];
+    }
     const orders = result.rows;
 
     const fucResult: Order[] = [];
@@ -49,11 +53,15 @@ export class orderModel {
     return fucResult;
   };
 
-  completedOrders = async (userId: string): Promise<Order[]> => {
+  completedOrders = async (userId: number): Promise<Order[]> => {
     const connection = await client.connect();
-    const SQL = `SELECT * FROM (SELECT id, status from orders WHERE userid = '${userId}' and status = 'complete') as userOrder INNER JOIN  order_products on id = orderid`;
+    const SQL = `SELECT * FROM (SELECT id, status FROM orders WHERE userid = '${userId}' and status = 'complete') as userOrder INNER JOIN  order_products on id = orderid`;
     const result = await connection.query(SQL);
     connection.release();
+
+    if (!result.rowCount) {
+      return [];
+    }
     const orders = result.rows;
 
     const fucResult: Order[] = [];
@@ -89,48 +97,20 @@ export class orderModel {
     return fucResult;
   };
 
-  addProduct = async (
-    userID: string,
-    orderID: string,
-    productID: string,
-    quantity: number
-  ) => {
+  create = async (userId: number, status: string): Promise<Order | number> => {
     const connection = await client.connect();
-    const SQLtest1 = `SELECT FROM order WHERE id = ${orderID} and userid = ${userId} RETURNING *`;
-    const test1 = await connection.query(SQLtest1);
+    const SQLorder = `INSERT INTO orders (userId, status) VALUES ('${userId}', '${status}') RETURNING id`;
+    const resultOrder = await connection.query(SQLorder);
+    const orderId: number = resultOrder.rows[0].id;
 
-    if (!test1.rowCount) {
-      connection.release();
-      return { err: "orderId", value: orderID };
-    }
-
-    const SQLtest2 = `SELECT FROM product WHERE id = ${productID} RETURNING *`;
-    const test2 = await connection.query(SQLtest2);
-
-    if (!test2.rowCount) {
-      connection.release();
-      return { err: "productId", value: productID };
-    }
-
-    if (quantity <= 0) {
-      connection.release();
-      return { err: "quantity", value: quantity };
-    }
-
-    const SQLadd = `INSERT INTO order_product(${orderID}, ${productID},${quantity})`;
-    await connection.query(SQLadd);
-    const SQLfind = `SELECT * FROM order_products WHERE orderid = ${orderID}`;
-    const findResult = await connection.query(SQLfind);
-    const orders = findResult.rows;
-    const SQLstatus = `SELECT status FROM order WHERE orderid = ${orderID}`;
-    const statusResult = await connection.query(SQLstatus);
-    const status = statusResult.rows[0].status;
-
-    const orderAfterAddition: Order = {
-      id: orderID,
-      userid: userID,
+    const result: Order = {
+      id: orderId,
+      userid: userId,
       status: status,
-      products: {},
+      products: [],
     };
+
+    connection.release();
+    return result;
   };
 }

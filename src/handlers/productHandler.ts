@@ -16,7 +16,7 @@ export const show = async (req: Request, res: Response) => {
   try {
     const productId = Number(req.params.id);
     if (!productId) {
-      res.status(400).send("[Error]: Didn't entered id");
+      res.status(400).send("[Error]: Product id is required.");
       return;
     }
     const product: Product | null = await model.show(productId);
@@ -26,41 +26,6 @@ export const show = async (req: Request, res: Response) => {
       res
         .status(400)
         .send(`[Error]: There are not user with id = ${productId}`);
-    }
-  } catch (err) {
-    res.status(500).send(`Server Error: ${err}`);
-  }
-};
-
-export const create = async (req: Request, res: Response) => {
-  try {
-    const userId: number = req.userId;
-    const { status, products } = req.body;
-    if (!products || !status) {
-      res
-        .status(400)
-        .send(
-          "[Error]: Missing some entries, (product id, quantity, status) are required."
-        );
-      return;
-    }
-
-    const productIdArray: string[] = [];
-    const quantityArray: number[] = [];
-    for (let i = 0; i < products.length; i++) {
-      productIdArray.push(products[i].productId);
-      quantityArray.push(products[i].quantity);
-    }
-    const newOrder = await model.create(
-      userId,
-      productIdArray,
-      quantityArray,
-      status
-    );
-    if (!(typeof newOrder === "number")) {
-      res.json(newOrder);
-    } else {
-      res.status(400).send(`[Error]: The product id ${newOrder} is invalid.`);
     }
   } catch (err) {
     res.status(500).send(`Server Error: ${err}`);
@@ -85,6 +50,60 @@ export const category = async (req: Request, res: Response) => {
       return;
     }
     const result = await model.category(category);
+    res.json(result);
+  } catch (err) {
+    res.status(500).send(`Server Error: ${err}`);
+  }
+};
+
+export const addProduct = async (req: Request, res: Response) => {
+  try {
+    const userId: number = req.userId;
+    const { orderId, productId, quantity } = req.body;
+    if (!orderId || !productId || !quantity) {
+      res
+        .status(400)
+        .send(
+          "[Error]: Missing some entries, (order id, product id, quantity) are required."
+        );
+    }
+
+    const result = await model.addProduct(userId, orderId, productId, quantity);
+
+    if (result === 0) {
+      res.status(400).send("[Error]: Entered wrong order id.");
+    } else if (result === 1) {
+      res.status(400).send("[Error]: Entered wrong product id.");
+    } else if (result === 2) {
+      res.status(400).send("[Error]: Quantity can't take number less than 1.");
+    }
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).send(`Server Error: ${err}`);
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const userId: number = req.userId;
+    const { orderId, productId } = req.body;
+    if (!orderId || !productId) {
+      res
+        .status(400)
+        .send(
+          "[Error]: Missing some entries, (order id, product id) are required."
+        );
+    }
+
+    const result = await model.deleteProduct(userId, orderId, productId);
+
+    if (result === 0) {
+      res.status(400).send("[Error]: Entered wrong order id.");
+    } else if (result === 1) {
+      res.status(400).send("[Error]: Entered wrong product id.");
+    }
+
     res.json(result);
   } catch (err) {
     res.status(500).send(`Server Error: ${err}`);

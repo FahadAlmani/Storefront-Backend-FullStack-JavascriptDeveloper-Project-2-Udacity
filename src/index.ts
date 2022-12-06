@@ -6,9 +6,6 @@ const app = express();
 dotenv.config();
 app.use(express.json());
 const { PORT } = process.env;
-app.get("/", (req: express.Request, res: express.Response): void => {
-  res.send("Hello World");
-});
 
 app.use(routes);
 
