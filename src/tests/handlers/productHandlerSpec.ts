@@ -48,4 +48,20 @@ describe("Testing Product Endpoint.", () => {
   it("[Testing]: The index Endpoint.", async () => {
     await request.get(`/product/category/${product.category}`).expect(200);
   });
+
+  it("[Testing]: The addProduct Endpoint.", async () => {
+    await request
+      .post(`/product/addProduct`)
+      .set("authorization", `Bearer ${token}`)
+      .send({ orderId: 1, productId: 1, quantity: 1 })
+      .expect(200);
+  });
+
+  it("[Testing]: The deleteProduct Endpoint.", async () => {
+    await request
+      .delete(`/product/deleteProduct`)
+      .set("authorization", `Bearer ${token}`)
+      .send({ orderId: 1, productId: 1 })
+      .expect(200);
+  });
 });

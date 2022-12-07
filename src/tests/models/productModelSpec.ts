@@ -34,34 +34,38 @@ describe("Testing Product Model.", () => {
     expect(product).toEqual(productTestCase);
   });
 
+  it("[Testing]: addProduct function add one product to the order specified by the order id", async () => {
+    const order = await ProductModel.addProduct(
+      orderTestCase.userid,
+      orderTestCase.id as number,
+      productTestCase.id as number,
+      orderTestCase.products[0].quantity
+    );
+
+    expect(order).toEqual(orderTestCase);
+  });
+
   it("[Testing]: popularProducts function returns the 5 most popular products.", async () => {
     const products: Product[] = await ProductModel.popularProducts();
 
     expect(products).toEqual([productTestCase]);
   });
 
+  it("[Testing]: deleteProduct function delete one product to the order specified by the order id", async () => {
+    const order = await ProductModel.deleteProduct(
+      orderTestCase.userid,
+      orderTestCase.id as number,
+      productTestCase.id as number
+    );
+
+    orderTestCase.products = [];
+
+    expect(order).toEqual(orderTestCase);
+  });
+
   it("[Testing]: category function returns all products that fall into a specific category.", async () => {
     const products: Product[] = await ProductModel.category("Fruit");
 
     expect(products).toEqual([productTestCase]);
-  });
-
-  it("[Testing]: create function creates order with valid product id.", async () => {
-    const products = orderTestCase.products;
-    const productIdArray: string[] = [];
-    const quantityArray: number[] = [];
-    for (let i = 0; i < products.length; i++) {
-      productIdArray.push(products[i].productId);
-      quantityArray.push(products[i].quantity);
-    }
-
-    const order: Order | number = await ProductModel.create(
-      orderTestCase.userid,
-      productIdArray,
-      quantityArray,
-      orderTestCase.status
-    );
-
-    expect(order).toEqual(1);
   });
 });

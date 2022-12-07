@@ -69,13 +69,15 @@ export const addProduct = async (req: Request, res: Response) => {
     }
 
     const result = await model.addProduct(userId, orderId, productId, quantity);
-
     if (result === 0) {
       res.status(400).send("[Error]: Entered wrong order id.");
+      return;
     } else if (result === 1) {
       res.status(400).send("[Error]: Entered wrong product id.");
+      return;
     } else if (result === 2) {
       res.status(400).send("[Error]: Quantity can't take number less than 1.");
+      return;
     }
 
     res.json(result);
@@ -100,8 +102,11 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     if (result === 0) {
       res.status(400).send("[Error]: Entered wrong order id.");
+      return;
+      return;
     } else if (result === 1) {
       res.status(400).send("[Error]: Entered wrong product id.");
+      return;
     }
 
     res.json(result);

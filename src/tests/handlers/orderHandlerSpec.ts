@@ -26,18 +26,26 @@ describe("Testing Order Endpoint.", () => {
       password: "123",
     })) as User;
 
-    const SQLorder = `INSERT INTO orders (userId, status) VALUES ('${user.id}', 'complete') RETURNING id`;
-    const resultOrder = await connection.query(SQLorder);
-    const orderId: number = resultOrder.rows[0].id;
+    // const SQLorder = `INSERT INTO orders (userId, status) VALUES ('${user.id}', 'complete') RETURNING id`;
+    // const resultOrder = await connection.query(SQLorder);
+    // const orderId: number = resultOrder.rows[0].id;
 
-    const SQLorder_products = `INSERT INTO order_products VALUES ('${orderId}', '1', 100) RETURNING productid, quantity `;
-    await connection.query(SQLorder_products);
+    // const SQLorder_products = `INSERT INTO order_products VALUES ('${orderId}', '1', 100)`;
+    // await connection.query(SQLorder_products);
     connection.release();
 
     token = jwt.sign(
       { user: { id: user.id, username: user.username } },
       SECRET_TOKEN
     );
+  });
+
+  it("[Testing]: The create Endpoint.", async () => {
+    await request
+      .post("/order/create")
+      .send({ status: "complete" })
+      .set("authorization", `Bearer ${token}`)
+      .expect(200);
   });
 
   it("[Testing]: The index Endpoint.", async () => {
@@ -52,16 +60,5 @@ describe("Testing Order Endpoint.", () => {
       .get("/order/completedOrders")
       .set("authorization", `Bearer ${token}`)
       .expect(200);
-  });
-
-  it("[Testing]: The create Endpoint.", async () => {
-    await request
-      .post("/order/create")
-      .send({
-        status: "complete",
-        products: [{ productId: "1", quantity: 100 }],
-      })
-      .set("authorization", `Bearer ${token}`)
-      .expect(400);
   });
 });

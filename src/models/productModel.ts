@@ -58,7 +58,6 @@ export class productModel {
       connection.release();
       return 0;
     }
-
     const SQLtest2 = `SELECT * FROM products WHERE id = ${productID}`;
     const test2 = await connection.query(SQLtest2);
 
