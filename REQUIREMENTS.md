@@ -10,9 +10,10 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 - Index route: 'product/index' [GET]
 - Show route: 'product/show/:id' [GET]
-- Create route: 'product/create' [POST] [token required]
 - Popular Products route: 'product/popularProducts' [GET]
 - Search by category route: 'product/category/:category' [GET]
+- add one product: 'product/addProduct'[POST] [token required]
+- delete one product: 'product/deleteProduct'[DELETE] [token required]
 
 #### Users
 
@@ -25,6 +26,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 - Index route: 'order' [GET] [token required]
 - Show completed orders route: 'order/completedOrders' [GET] [token required]
+- create empty order: 'order/create' [POST] [token required]
 
 ## Database
 
