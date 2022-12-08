@@ -117,6 +117,13 @@ export class productModel {
       return 1;
     }
 
+    const SQLtest3 = `SELECT * FROM order_products WHERE orderid = ${orderID} AND productid = ${productID}`;
+    const test3 = await connection.query(SQLtest3);
+    if (!test3.rowCount) {
+      connection.release();
+      return 2;
+    }
+
     const SQLdelete = `DELETE FROM order_products WHERE orderid = ${orderID} AND productid = ${productID}`;
     await connection.query(SQLdelete);
     const SQLfind = `SELECT * FROM order_products WHERE orderid = ${orderID}`;

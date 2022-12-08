@@ -107,6 +107,11 @@ export const deleteProduct = async (req: Request, res: Response) => {
     } else if (result === 1) {
       res.status(400).send("[Error]: Entered wrong product id.");
       return;
+    } else if (result === 2) {
+      res
+        .status(400)
+        .send("[Error]: There are no product with this product id.");
+      return;
     }
 
     res.json(result);

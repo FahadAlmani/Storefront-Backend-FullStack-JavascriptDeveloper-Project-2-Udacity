@@ -14,6 +14,12 @@
 
 _Note:_ Please keep in mind that the PEPPER and SECRET TOKEN I used are 123.
 
+_Note:_ the database port is 5432.
+
+_Note:_ the application port is 3000.
+
+
+
 ## npm scripts
 
 1- (npm run dev) run typescript code.
